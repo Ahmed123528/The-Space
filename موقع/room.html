@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Room</title>
+    <!-- الروابط -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        .hidden {
+            display: none;
+        }
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 10;
+        }
+        .controls button {
+            font-size: 20px;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .background {
+            background: url('background.gif') no-repeat center center fixed;
+            background-size: cover;
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            z-index: -1;
+        }
+        .container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            z-index: 2;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            border: 1px solid #888;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .invite-link {
+            margin-top: 20px;
+            font-size: 1.2rem;
+        }
+        .room-details {
+            color: #FFD700;
+            margin-top: 20px;
+        }
+        .room-info {
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="container">
+        <h1 id="room-name-heading" class="display-4">Room</h1>
+        <div id="room-details" class="room-details mt-4"></div>
+        <div class="invite-link hidden">
+            <p>Invite Link: <span id="invite-link"></span></p>
+        </div>
+    </div>
+
+    <!-- عناصر التحكم -->
+    <div class="controls">
+        <button id="toggle-mic" class="btn btn-secondary"><i class="fas fa-microphone"></i></button>
+        <button id="toggle-camera" class="btn btn-secondary"><i class="fas fa-video"></i></button>
+        <button id="share-screen" class="btn btn-secondary"><i class="fas fa-desktop"></i></button>
+    </div>
+
+    <!-- JavaScript and Socket.IO -->
+    <script src="https://cdn.socket.io/socket.io-4.4.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // استخراج معلمات الاستعلام من عنوان URL
+            var params = new URLSearchParams(window.location.search);
+            var roomName = params.get("room-name");
+            var roomCode = params.get("room-code");
+
+            // توليد رمز عشوائي للغرفة
+            function generateRoomCode() {
+                return Math.random().toString(36).substring(2, 10).toUpperCase();
+            }
+
+            if (roomName && !roomCode) {
+                // إذا تم إنشاء غرفة جديدة ولم يتم توفير رمز
+                roomCode = generateRoomCode();
+                window.history.replaceState({}, document.title, window.location.pathname + "?room-name=" + roomName + "&room-code=" + roomCode);
+            }
+
+            // تحديث عنوان الصفحة واسم الغرفة
+            var pageTitleElement = document.getElementById("page-title");
+            var roomNameHeadingElement = document.getElementById("room-name-heading");
+            var roomDetailsElement = document.getElementById("room-details");
+            var inviteLinkElement = document.getElementById("invite-link");
+            var inviteLinkContainer = document.querySelector(".invite-link");
+
+            if (roomName) {
+                pageTitleElement.textContent = roomName;
+                roomNameHeadingElement.textContent = roomName;
+                roomDetailsElement.innerHTML = `
+                    <p class="room-info">Room Code: ${roomCode}</p>
+                    <p class="room-info">Created At: ${new Date().toLocaleString()}</p>
+                    <p class="room-info">Current Participants: 1</p>`;
+                var inviteLink = window.location.href;
+                inviteLinkElement.textContent = inviteLink;
+                inviteLinkContainer.classList.remove("hidden");
+            } else if (roomCode) {
+                pageTitleElement.textContent = "Room";
+                roomNameHeadingElement.textContent = "Room";
+                roomDetailsElement.innerHTML = `
+                    <p class="room-info">Joining Room with Code: ${roomCode}</p>
+                    <p class="room-info">Joined At: ${new Date().toLocaleString()}</p>`;
+                var inviteLink = window.location.href;
+                inviteLinkElement.textContent = inviteLink;
+                inviteLinkContainer.classList.remove("hidden");
+            }
+
+            // تفاعلات الزرّ لفتح وإغلاق الميكروفون
+            var isMicOn = true;
+            document.getElementById("toggle-mic").addEventListener("click", function() {
+                isMicOn = !isMicOn;
+                var micButton = document.getElementById("toggle-mic");
+                micButton.innerHTML = isMicOn ? '<i class="fas fa-microphone"></i>' : '<i class="fas fa-microphone-slash"></i>';
+                micButton.classList.toggle('btn-danger', !isMicOn);
+                micButton.classList.toggle('btn-secondary', isMicOn);
+                // تنفيذ الإجراءات المناسبة هنا
+            });
+
+            // تفاعلات الزرّ لفتح وإغلاق الكاميرا
+            var isCameraOn = true;
+            document.getElementById("toggle-camera").addEventListener("click", function() {
+                isCameraOn = !isCameraOn;
+                var cameraButton = document.getElementById("toggle-camera");
+                cameraButton.innerHTML = isCameraOn ? '<i class="fas fa-video"></i>' : '<i class="fas fa-video-slash"></i>';
+                cameraButton.classList.toggle('btn-danger', !isCameraOn);
+                cameraButton.classList.toggle('btn-secondary', isCameraOn);
+                // تنفيذ الإجراءات المناسبة هنا
+            });
+
+            // تفاعلات زر مشاركة الشاشة
+            document.getElementById("share-screen").addEventListener("click", function() {
+                // تنفيذ إجراءات مشاركة الشاشة هنا
+                alert('Sharing screen functionality is not implemented yet.');
+            });
+        });
+    </script>
+</body>
+</html>

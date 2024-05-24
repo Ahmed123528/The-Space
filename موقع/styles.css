@@ -1,0 +1,199 @@
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+}
+
+.tablinks {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px 5px 0 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.tablinks:hover,
+.tablinks.active {
+    background-color: #0056b3;
+}
+
+/* Meeting Room Content */
+.tabcontent {
+    display: none;
+    padding: 20px;
+}
+
+.meeting-room-content {
+    display: flex;
+}
+
+.sidebar {
+    width: 250px;
+    height: 100%;
+    background-color: #f5f5f5;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.chat {
+    margin-bottom: 20px;
+}
+
+.chat-messages {
+    border: 1px solid #ddd;
+    padding: 10px;
+    height: 200px;
+    overflow-y: auto;
+}
+
+.chat input[type="text"] {
+    width: calc(100% - 70px);
+    padding: 10px;
+    margin-right: 10px;
+}
+
+.chat button,
+#screen-share-btn,
+button[type="submit"] {
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.chat button:hover,
+#screen-share-btn:hover,
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.participants ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.participants li {
+    margin-bottom: 5px;
+}
+
+.container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    width: 400px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+/* Background Animation */
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-image: url('638470.jpg');
+    background-size: cover;
+    animation: slide 60s linear infinite;
+}
+
+@keyframes slide {
+    0% { background-position: 0 0; }
+    100% { background-position: 100% 0; }
+}
+
+/* Logo */
+.logo {
+    background-image: url('giphy (1).gif');
+    width: 150px;
+    height: 150px;
+    position: fixed;
+    top: 10px;
+    right: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+/* Create Room Button */
+.create-room-button {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.create-room-button button {
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.create-room-button button:hover {
+    background-color: #0056b3;
+}
+
+/* Main Container */
+.main-container {
+    text-align: center;
+    color: #fff;
+    position: relative;
+}
+
+.main-container h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+
+.main-container p {
+    font-size: 1.5em;
+    margin-bottom: 40px;
+}
+
+.main-container button {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.main-container button:hover {
+    transform: scale(1.1);
+}
